@@ -6,23 +6,25 @@ class GuestThread extends Thread {
     {
         while (true)
         {
+            System.out.println("Guest "+ this.threadId() + " approaches the showroom.");
             if(!showroom.full) //if the showroom sign says available
             {
                 showroom.full = true;
-                System.out.println("Guest "+ this.threadId() + " has entered the showroom");
+                System.out.println("Guest "+ this.threadId() + " enters the showroom.");
                 try {
                     sleep(10);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                System.out.println("Guest "+ this.threadId() + " has exited the showroom");
+                System.out.println("Guest "+ this.threadId() + " has exited the showroom.");
                 showroom.full = false;
                 break;
             }
             else //if the showroom sign says full
             {
+                System.out.println("The showroom sign says busy.");
                 try {
-                    sleep(30); //Guest does something else
+                    sleep(50); //Guest does something else
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -58,5 +60,6 @@ public class ProblemTwo {
                 e.printStackTrace();
             }
         }
+        System.out.println("All guests visited the showroom.");
     }
 }

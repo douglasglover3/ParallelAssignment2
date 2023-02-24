@@ -1,48 +1,42 @@
 
 class GuestThread extends Thread {
     boolean insideLabyrinth = false;
-    boolean party = true;
+    boolean party = false;
     boolean hungry = true;
     Cupcake cupcake;
     Labyrinth labyrinth;
     synchronized public void run()
     {
         System.out.println("Guest " + this.threadId() + " arrived to party.");
+        party = true;
         while(party)
+        {
             if(insideLabyrinth) {
-                if(cupcake.eaten) // cupcake is absent
+                System.out.println("Guest " + this.threadId() + " entered labyrinth.");
+                if(hungry) //guest has not eaten cupcake
                 {
-                    if(hungry) //guest requests cupcake
+                    if(cupcake.eaten) // cupcake is absent
                     {
                         cupcake.request();
+                        cupcake.eaten = false;
                     }
-                }
-                if(!cupcake.eaten) //cupcake is present
-                {
-                    
-                    if(hungry) //guest eats cupcake
+                    if(!cupcake.eaten) //cupcake is present
                     {
-                        cupcake.eat();
+                        cupcake.eaten = true;
                         hungry = false;
                     }
-                    else
-                    {
-                        //leave cupcake
-                    }
                 }
+                System.out.println("Guest " + this.threadId() + " exited labyrinth.");
                 insideLabyrinth = false;
                 labyrinth.exit();
             }
+        }
     }
 }
 class Cupcake {
     public boolean eaten = false;
     int requests = 0;
-    public void eat(){
-        eaten = true;
-    }
     public void request(){
-        eaten = false;
         requests++;
         System.out.println("Cupcake requested.");
     }
@@ -57,11 +51,11 @@ class Labyrinth {
     }
 }
 
-public class ProblemOne {
+public class ProblemOne extends Thread{
     public static void main(String[] args)
     {
         //Number of guests
-        int n = 4;
+        int n = 5;
 
         GuestThread guests[] = new GuestThread[n];
         Cupcake labyrinthCupcake = new Cupcake();
@@ -74,7 +68,6 @@ public class ProblemOne {
             guests[i].labyrinth = labyrinth;
             guests[i].start();
         }
-
         int randomGuest;
         while(labyrinthCupcake.requests < n - 1) {
             if(!labyrinth.full)
